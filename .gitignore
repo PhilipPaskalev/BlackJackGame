@@ -1,0 +1,158 @@
+import java.util.Random;
+import java.util.Scanner;
+
+public class BlackJack {
+    public static String drawCard(String[] card) {
+        Random rand = new Random();
+
+        int randomIndexCard = rand.nextInt(card.length);
+        String randomCard = card[randomIndexCard];
+
+        return randomCard;
+    }
+
+    public static String drawColor(String[] color) {
+        Random rand = new Random();
+
+        int randomIndexColor = rand.nextInt(color.length);
+        String randomColor = color[randomIndexColor];
+
+        return randomColor;
+    }
+
+    public static Integer score(String choosCard) {
+        Integer result = 0;
+
+        switch (choosCard){
+            case "A":
+                if (result >= 10) {
+                    result = 1; break;
+                }else {
+                    result = 11; break;
+                }
+            case "2": result = 2; break;
+            case "3": result = 3; break;
+            case "4": result = 4; break;
+            case "5": result = 5; break;
+            case "6": result = 6; break;
+            case "7": result = 7; break;
+            case "8": result = 8; break;
+            case "9": result = 9; break;
+            case "10": result = 10; break;
+            case "J":
+            case "Q":
+            case "K":
+                result = 10; break;
+            default: break;
+        }
+
+        return result;
+    }
+
+    public static void winnerCheck(Integer player, Integer dealer) {
+        if (player > dealer){
+            System.out.println("-----Result-----");
+            System.out.println("Player score: " + player);
+            System.out.println("Dealer score: " + dealer);
+            System.out.println("Congratulations You Win");
+        }else if (player == dealer) {
+            System.out.println("-----Result-----");
+            System.out.println("Player score: " + player);
+            System.out.println("Dealer score: " + dealer);
+            System.out.println("Result is equal nobody wins");
+        }else {
+            System.out.println("-----Result-----");
+            System.out.println("Player score: " + player);
+            System.out.println("Dealer score: " + dealer);
+            System.out.println("Sorry Dealer Win");
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        Integer playerScore = 0;
+        Integer dealerScore = 0;
+        //String[] card = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
+        String[] card = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
+        //String color[] = { "Hearts", "Diamonds", "Clubs", "Spades" };
+        String color[] = { "♥", "♦", "♠", "♣" };
+
+        String firstCardPlayer = drawCard(card);
+        System.out.println("Player draw card " + firstCardPlayer + drawColor(color));
+        playerScore += score(firstCardPlayer);
+        System.out.println("Player score: " + playerScore);
+
+        String firstCardDealer = drawCard(card);
+        System.out.println("Dealer draw card " + firstCardDealer + drawColor(color));
+        dealerScore += score(firstCardDealer);
+        System.out.println("Dealer score: " + dealerScore);
+
+        String secondCardPlayer = drawCard(card);
+        System.out.println("Player draw card " + secondCardPlayer + drawColor(color));
+        playerScore += score(secondCardPlayer);
+        System.out.println("Player score: " + playerScore);
+
+        //playerScore = 18; //just for easy testing
+        if (playerScore > 21) {
+            System.out.println("Sorry you just loose");
+        }else {
+            String secondCardDealer = drawCard(card);
+            dealerScore += score(secondCardDealer);
+            System.out.println("Dealer draw  -----HIDDEN-----");
+            System.out.println("Dealer score -----HIDDEN-----\n");
+
+            //playerScore = 18; //just for easy testing
+            //dealerScore = 18; // just for easy testing
+
+            if (dealerScore > 21) {
+                System.out.println("You win. Dealer have " + dealerScore);
+            }else if (dealerScore == 21 && playerScore == 21){
+                System.out.println("Result is equal nobody wins");
+            }else {
+                System.out.println("It's your our turn now! Do you wont to draw (Yes/No)?");
+                String positiveAnswer = "yes";
+                String negativeAnswer = "no";
+                String answer = scan.nextLine().toLowerCase();
+
+                if(positiveAnswer.equals(answer)){
+                    do {
+                        firstCardPlayer = drawCard(card);
+                        System.out.println("Player draw card " + firstCardPlayer + drawColor(color));
+                        playerScore += score(firstCardPlayer);
+                        System.out.println("Player score: " + playerScore);
+
+                        if (dealerScore == playerScore){
+                            System.out.println("-----Result-----");
+                            System.out.println("Player score: " + playerScore);
+                            System.out.println("Dealer score: " + dealerScore);
+                            System.out.println("Result is equal nobody wins");
+                            answer = negativeAnswer;
+                        }else if (dealerScore > playerScore){
+                            System.out.println("-----Result-----");
+                            System.out.println("Player score: " + playerScore);
+                            System.out.println("Dealer score: " + dealerScore);
+                            System.out.println("Sorry Dealer Win");
+                            answer = negativeAnswer;
+                        }else if(playerScore > 21) {
+                            System.out.println("-----Result-----");
+                            System.out.println("Player score: " + playerScore);
+                            System.out.println("Dealer score: " + dealerScore);
+                            System.out.println("Sorry Dealer Win");
+                            answer = negativeAnswer;
+                        }else if ((playerScore == 21) && (dealerScore < 21)) {
+                            System.out.println("-----Result-----");
+                            System.out.println("Player score: " + playerScore);
+                            System.out.println("Dealer score: " + dealerScore);
+                            System.out.println("Congratulations You Win");
+                        }else if (playerScore < 21){
+                            System.out.println("Do you wont to draw again(Yes/No)?");
+                            answer = scan.nextLine().toLowerCase();
+                        }
+                    }while (positiveAnswer.equals(answer));
+                }else {
+                    winnerCheck(playerScore, dealerScore);
+                }
+            }
+        }
+    }
+}
